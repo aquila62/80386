@@ -1,0 +1,34 @@
+The programs in this repository are written in 32-bit assembler for
+Intel X86 processors running Linux.  The assembler used is NASM.
+The programs are assembled into elf object modules and linked with
+either ld or gcc.  Gcc is only used as a linker when the program
+calls a GNU subroutine, such as printf.
+
+The entry point for the ld linker is _start.  The entry point for
+the gcc linker is main.
+
+All programs have three sections.
+
+* .text is read only  and executable
+* .data is read only  and not executable
+* .bss  is read/write and not executable
+
+So far, none of the programs contain linked lists.  As a result,
+they do not need to grab memory from the heap with the malloc
+subroutine.
+
+Each program contains utility subroutines for performing simple
+input/output tasks, such as printing a register in hex.
+No effort has been made to create a subroutine library for
+these utilities.  Recursive subroutines use local variables.
+All other routines use global variables.  Frequently a single
+parameter is passed to a subroutine in the eax register.  The
+stack is used to pass parameters only in recursive subroutines.
+
+See INSTALL for installing the programs.
+
+See Testing for testing the programs.
+
+The website for this repository is at:
+
+    https://aquila62.github.io

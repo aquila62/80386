@@ -1,0 +1,22 @@
+Installing the 80386 repository:
+
+Make shell scripts executable.
+
+chmod 755 *.sh
+
+Next compile the programs.
+
+./inst.sh
+
+To de-install this repository:
+
+./deinst.sh
+
+To see how to test the programs, read TESTING.
+
+To read general information about the assembler programs
+in this repository, read README.80386.
+
+To see the website for this repository, go to:
+
+    https://aquila62.github.io 

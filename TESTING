@@ -1,0 +1,95 @@
+Test a Linear Feedback Shift Register by running lfsr15.
+This program cycles through a 15-bit LFSR.  The period length
+is printed at the end.  Output bits are not printed.
+
+Usage:
+
+lfsr15
+
+---------------------------------------------------------------
+
+Test the Sieve of Eratosthenes by running sv.  Prime numbers
+are generated up to 268435399.  Only primes from 268427279
+to 268435399 are printed, to save space.
+
+Usage:
+
+sv
+
+---------------------------------------------------------------
+
+Solve the Tower of Hanoi puzzle by running twr.  A recursive
+algorithm is used.  See the Wikipedia article on the Tower of
+Hanoi for information on the algorithm.
+
+Usage:
+
+twr [#disks]
+
+Where #disks is 2 to 9.  Default is 3 disks.
+
+The program prints the state of the three towers after each move.
+
+---------------------------------------------------------------
+
+Perform a cyclical reduncancy check by running crc.  This
+program produces a 32 bit hash of input data read from stdin.
+
+Usage:
+
+cat myfile | crc
+echo "text" | crc
+
+The output is a 32 bit hexadecimal number.
+
+---------------------------------------------------------------
+
+Generate a random bit stream by running etausgen.  This program 
+creates an endless stream of ASCII zeros and ones.  Press CTL-Z
+to stop the program.  The randomizing algorithm used is called
+etaus, meaning extended TAUS.  See the etaus repository for more
+information on this algorithm.  The initial state for this program
+is based on the UNIX date and time in seconds since the epoch.
+
+Usage:
+
+etausgen
+
+---------------------------------------------------------------
+
+Generate a random data stream by running etausraw.  This program 
+creates an endless stream of binary data.  Press CTL-Z to stop
+the program.  The randomizing algorithm used is called etaus,
+meaning extended TAUS.  See the etaus repository for more
+information on this algorithm.  The initial state for this program
+is based on the UNIX date and time in seconds since the epoch.
+
+This program has been tested successfully with the dieharder
+suite of randomness tests.
+
+Usage:
+
+etausraw
+
+etausraw | dieharder -a -g 200
+
+---------------------------------------------------------------
+
+Run lmt to limit a data stream or bit stream to 16 megabytes
+of data.  It reads 16 megabytes from stdin and writes them
+to stdout.
+
+Usage:
+
+lmt
+
+etausraw | lmt | crc
+
+---------------------------------------------------------------
+
+Display your parameter list and your environment variables
+by running getprm.
+
+Usage:
+
+getprm x y z
