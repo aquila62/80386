@@ -24,9 +24,9 @@ Hanoi for information on the algorithm.
 
 Usage:
 
-twr [#disks]
+twr #disks
 
-Where #disks is 2 to 9.  Default is 3 disks.
+Where #disks is 2 to 9.
 
 The program prints the state of the three towers after each move.
 

@@ -43,7 +43,8 @@ _start:
 	; This is more than enough for this program
 	; The stack is now part of the .bss section.
         ;------------------------------------------------------------
-	mov esp,stkend
+	mov [prmstk],esp      ; save runtime stack
+	mov esp,stkend        ; create new program stack
         ;------------------------------------------------------------
 	; initialize move count to zero
         ;------------------------------------------------------------
@@ -94,30 +95,33 @@ getparm:
 	push eax
 	push ebx
         ;---------------------------------------------------
-	; read number of disks from stdin
+	; get input parameter from stack
+	; prmstk contains address of argc
+	; prmstk+4 contains address of argv[0]
+	; prmstk+8 contains address of argv[1]
         ;---------------------------------------------------
-	mov eax,3        ; read input
-	mov ebx,0        ; stdin
-	mov ecx,kbbuf    ; buf
-	mov edx,1        ; length
-	int 0x80         ; syscall
-	xor eax,eax      ; eax = #disks
-	mov al,[kbbuf]   ; load character from buffer
-	sub al,0x30      ; convert ASCII to binary
-	cmp al,0x02      ; validate 2 to 9
-	jb .err          ; less tha 2, quit
-	cmp al,0x09      ; greater than 9?
-	ja .err          ; yes, quit
-	jmp .stor        ; valid parameter, save total disks
-.err:
-	call usage       ; invalid #disks, print usage
-	jmp eoj          ; and quit
-.stor:
-	mov [totdsks],eax       ; save total number of disks
-.done:
+	mov ebx,[prmstk]       ; ebx = runtime stack address
+	mov eax,[ebx]          ; eax = parm count argc
+	cmp eax,2              ; one parameter?
+	jnz .err               ; no, print usage
+	add ebx,8              ; ebx = address of argv[1]
+	mov eax,[ebx]          ; eax points to argv[1] string
+	mov ebx,eax            ; ebx points to argv[1] string
+	mov al,[ebx]           ; 1st character in 1st parm
+	sub al,0x30            ; convert ASCII to binary
+	cmp al,2               ; less than 2?
+	jb .err                ; yes, print usage
+	cmp al,9               ; greater than 9?
+	ja .err                ; yes, print usage
+	xor ebx,ebx            ; clear high order 24 bits
+	mov bl,al              ; ebx = total disks
+	mov [totdsks],ebx      ; store totdsks
 	pop ebx
 	pop eax
 	ret
+.err:
+	call usage       ; invalid #disks, print usage
+	jmp eoj          ; and quit
 ;---------------------------------------------------
 ; print usage protocol
 ;---------------------------------------------------
@@ -675,6 +679,7 @@ uflmsg:    db 'Stack underflow',0x0a,0
 chbuf	resb 4          ; print character buffer
 kbbuf	resb 4          ; print character buffer
 dgtstk  resd 16         ; decimal digit stack
+prmstk  resd 1          ; runtime parameter stack address
 parm1   resd 1          ; recursive call parm 1
 parm2   resd 1          ; recursive call parm 2
 parm3   resd 1          ; recursive call parm 3
