@@ -36,12 +36,13 @@
 ; 0x08000000 matches the C program sieve.c
 ; 0x10000000 works in assembler but not in C
 ; 0x10000000 produces a segmentation error in C
-MAX	equ 0x08000000   ; to match with C program
+MAX	equ 0x01000000   ; to match with C program
 ; MAX	equ 0x10000000   ; to generate more prime numbers
 _start:
 	call bldsv       ; initialize table of odd ordinal numbers
 	call xout        ; cross out odd non-prime numbers (eg 9,15,21,...)
 	call shw         ; print (partial) list of primes
+	call tally       ; count number of primes in list
 	                 ; The full list is too long to print
 eoj:                     ; terminate the program
 	mov eax,1        ; terminate the program
@@ -161,6 +162,37 @@ xout:
 	pop eax
 	ret
 ;------------------------------------------------------------
+; Count the number of primes in the list
+;------------------------------------------------------------
+tally:
+	push eax
+	push ebx
+	push esi
+	mov esi,sv        ; point to beginning of table
+	xor eax,eax
+	inc eax           ; start with 3
+	mov [kount],eax   ; initialize count to zero
+.lp:
+	mov eax,[esi]     ; test for prime number
+	or eax,eax        ; number is zero?
+	jz .nxt           ; yes, test next number
+	mov eax,[kount]   ; not zero, tally number
+	inc eax
+	mov [kount],eax
+.nxt:
+	add esi,4         ; point to next number in list
+	mov eax,esi
+	mov ebx,svend
+	cmp eax,ebx       ; reached end of list?
+	jb .lp            ; no, repeat tally
+	mov eax,tallymsg  ; print "total primes "
+	call putstr       ; print to stderr
+	call puttally     ; yes, print tally to stdout
+	pop esi
+	pop ebx
+	pop eax
+	ret
+;------------------------------------------------------------
 ; print out a partial list of primes
 ; the algorithm here is to skip all but the last n primes
 ; print out the last n primes
@@ -170,11 +202,13 @@ shw:
 	push ebx
 	push esi
 	push edi
+	xor eax,eax         ; initialize counter to zero
+	mov [kount],eax
 	; first prime number is 2
 	; but it is not printed, for brevity
 	; only the last n primes are printed
 	mov esi,sv          ; point to beginning of table
-	mov ebx,0x07fff000  ; bypass n primes for brevity
+	mov ebx,0x00fff000  ; bypass n primes for brevity
 	shl ebx,2           ; size of number is 4 bytes
 	add esi,ebx         ; point near end of table
 	mov ebx,4           ; size of each number in bytes
@@ -347,6 +381,158 @@ putprime:
 	pop eax
 	ret
 ;---------------------------------------------------
+; print prime number count in decimal
+;---------------------------------------------------
+puttally:
+	push eax
+	push ebx
+	push ecx
+	push edx
+	;-------------------------------------------
+	; calculate units digit
+	;-------------------------------------------
+	xor edx,edx
+	mov eax,[kount]
+	mov ebx,10
+	div ebx
+	mov [dgtstk],edx
+	;-------------------------------------------
+	; calculate tens digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+4],edx
+	;-------------------------------------------
+	; calculate hundreds digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+8],edx
+	;-------------------------------------------
+	; calculate thousands digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+12],edx
+	;-------------------------------------------
+	; calculate ten thousands digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+16],edx
+	;-------------------------------------------
+	; calculate hundred thousands digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+20],edx
+	;-------------------------------------------
+	; calculate millions digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+24],edx
+	;-------------------------------------------
+	; calculate ten millions digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+28],edx
+	;-------------------------------------------
+	; calculate hundred millions digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+32],edx
+	;-------------------------------------------
+	; calculate billions digit
+	;-------------------------------------------
+	xor edx,edx
+	div ebx
+	mov [dgtstk+36],edx
+        ;---------------------------------------------------
+        ; print digits from stack
+	; first bypass leading zeros
+        ;---------------------------------------------------
+	mov eax,[dgtstk+36]        ; billions digit
+	or eax,eax                 ; zero?
+	jnz .pk2                   ; no, print 10 digits
+	mov eax,[dgtstk+32]        ; hundred millions digit
+	or eax,eax                 ; zero?
+	jnz .pk3                   ; no, print 9 digits
+	mov eax,[dgtstk+28]        ; ten millions digit
+	or eax,eax                 ; zero?
+	jnz .pk4                   ; no, print 8 digits
+	mov eax,[dgtstk+24]        ; millions digit
+	or eax,eax                 ; zero?
+	jnz .pk5                   ; no, print 7 digits
+	mov eax,[dgtstk+20]        ; hundred thousands digit
+	or eax,eax                 ; zero?
+	jnz .pk6                   ; no, print 6 digits
+	mov eax,[dgtstk+16]        ; ten thousands digit
+	or eax,eax                 ; zero?
+	jnz .pk7                   ; no, print 5 digits
+	mov eax,[dgtstk+12]        ; thousands digit
+	or eax,eax                 ; zero?
+	jnz .pk8                   ; no, print 4 digits
+	mov eax,[dgtstk+8]         ; hundreds digit
+	or eax,eax                 ; zero?
+	jnz .pk9                   ; no, print 3 digits
+	mov eax,[dgtstk+4]         ; tens digit
+	or eax,eax                 ; zero?
+	jnz .pk10                  ; no, print 2 digits
+	jmp .pk11                  ; yes, print 1 digit
+;------------------------------------------------------
+; entry points for bypassing leading zeros
+;------------------------------------------------------
+.pk2:
+	mov eax,[dgtstk+36]        ; billions digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk3:
+	mov eax,[dgtstk+32]        ; hundred millions digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk4:
+	mov eax,[dgtstk+28]        ; ten millions digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk5:
+	mov eax,[dgtstk+24]        ; millions digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk6:
+	mov eax,[dgtstk+20]        ; hundred thousands digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk7:
+	mov eax,[dgtstk+16]        ; ten thousands digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk8:
+	mov eax,[dgtstk+12]        ; thousands digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk9:
+	mov eax,[dgtstk+8]         ; hundreds digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk10:
+	mov eax,[dgtstk+4]         ; tens digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+.pk11:
+	mov eax,[dgtstk]           ; units digit
+        add eax,0x30               ; convert to ASCII
+	call puterr                ; print digit
+	mov al,10                  ; end of line char
+	call puterr                ; print to stderr
+	pop edx
+	pop ecx
+	pop ebx
+	pop eax
+	ret
+;---------------------------------------------------
 ; print esi register in hex
 ;---------------------------------------------------
 putesi:
@@ -382,6 +568,24 @@ puteol:
 	push eax
 	mov al,10
 	call putchar
+	pop eax
+	ret
+;---------------------------------------------------
+; print string to stderr
+;---------------------------------------------------
+putstr:
+	push eax
+	push esi
+	mov esi,eax        ; eax points to string
+.lp:
+	mov al,[esi]       ; current char in string
+	or al,al           ; end of string?
+	jz .done           ; yes, finish
+	call puterr        ; no, print char to stdout
+	inc esi            ; point to next char in string
+	jmp .lp            ; repeat string loop
+.done:
+	pop esi
 	pop eax
 	ret
 ;---------------------------------------------------
@@ -464,12 +668,39 @@ putchar:
 	pop ebx
 	pop eax
 	ret
+;---------------------------------------------------
+; print one ASCII character to stderr
+; extra caution is taken to preserve integrity of
+; all working registers
+; ebp register is assumed to be safe
+;---------------------------------------------------
+puterr:
+	push eax
+	push ebx
+	push ecx
+	push edx
+	push esi
+	push edi
+	mov [chbuf],al  ; place character in its own buffer
+	mov eax,4       ; write
+	mov ebx,2       ; handle (stdout)
+	mov ecx,chbuf   ; addr of buf to write
+	mov edx,1       ; #chars to write
+	int 0x80        ; syscall
+	pop edi
+	pop esi
+	pop edx
+	pop ecx
+	pop ebx
+	pop eax
+	ret
 	; reserved space for constant data
 	; read only, not executable
 	section .data
 	align 16
 ; binary to hex translate table
 hxtbl:  db '0123456789ABCDEF'
+tallymsg: db 'Total primes ',0
 	; reserved space for variable data
 	; read/write, not executable
 	section .bss
@@ -479,8 +710,9 @@ prm:	resd 2          ; current prime number
 gap:	resd 2          ; gap in bytes between multiples
 bgn:	resd 2          ; current starting position in table
 prime   resd 2          ; prime number to print
+kount   resd 2          ; count of prime numbers in list
 dgtstk  resd 32         ; decimal digit stack
-sv:	resd MAX        ; table of odd numbers 3,5,7,...
+sv:	resd MAX+MAX    ; table of odd numbers 3,5,7,...
 svend:	resd 2          ; pointer to end of table
 ;---------------------------------------------------
 ; end of program
