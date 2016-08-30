@@ -34,7 +34,6 @@ _start:
 	; The stack is now part of the .bss section.
         ;------------------------------------------------------------
 	mov esp,stkend
-	call bld            ; build the crc table
 	call calc           ; calculate the crc from stdin
 eoj:
 	mov eax,1           ; exit
@@ -44,52 +43,6 @@ eoj:
 	nop
 	nop
 	nop
-;---------------------------------------------------
-; build crc table
-;---------------------------------------------------
-bld:
-	push eax
-	push ebx
-	push ecx
-	push edx
-	xor eax,eax             ; eax = 0
-	mov [byt],eax           ; start with byte = 0
-	mov ebx,crctbl          ; point to crc table
-.lp:                            ; outer loop x 256
-	mov eax,[byt]           ; eax = byte 0 to 255
-	mov [crcbyt],eax        ; save in temporary byte
-	mov ecx,8               ; set loop counter to 8
-.lp2:                           ; inner loop x 8 bits
-	mov edx,[crcbyt]        ; edx = byte
-	and edx,1               ; low order bit of byte
-	mov eax,edx             ; eax = low order bit of byte
-	sub eax,edx             ; eax = eax - edx - edx
-	sub eax,edx             ; result is 0 or 0xffffffff
-	mov [msk],eax           ; save result in mask
-	mov eax,[crcbyt]        ; eax = byte
-	shr eax,1               ; shift right 1 bit
-	mov [left],eax          ; save as (byte >> 1)
-	mov eax,0xedb88320      ; eax = the crc-32 polynomial
-	mov edx,[msk]           ; edx = the mask
-	and eax,edx             ; lower 8 bits of the polynomial
-	mov [rght],eax          ; 0xedb88320 & mask
-	mov eax,[left]          ; byte >> 1
-	mov edx,[rght]          ; 0xedb88320 & mask
-	xor eax,edx             ; (byte >> 1) ^ (0x3db88320 & mask)
-	mov [crcbyt],eax        ; save in byte
-	loop .lp2               ; repeat inner loop 8 times
-	mov [ebx],eax           ; save in table[byte]
-	add ebx,4               ; point to table[byte+1]
-	mov eax,[byt]           ; byte = byte + 1
-	inc eax
-	mov [byt],eax           ; save new value for byte
-	cmp eax,256             ; 256 entries in table?
-	jb .lp                  ; no, repeat outer loop 256 times
-	pop edx                 ; return to mainline
-	pop ecx
-	pop ebx
-	pop eax
-	ret
 ;---------------------------------------------------
 ; calculate the crc of input stream from stdin
 ;---------------------------------------------------
@@ -125,13 +78,13 @@ calc:
 	xor eax,edx         ; eax = crc ^ byte
 	and eax,0xff        ; low 8 bits of eax
 	mov [indx],eax      ; index to crc table
-	mov esi,crctbl      ; point to crc table
+	mov esi,tbl         ; point to crc table
 	shl eax,2           ; index = index * 4
-	add esi,eax         ; point to crctbl[indx]
+	add esi,eax         ; point to tbl[indx]
 	mov eax,[crc]       ; eax = crc
 	shr eax,8           ; shift crc 8 bits to right
-	mov edx,[esi]       ; edx = crctbl[indx]
-	xor eax,edx         ; crc = (crc >> 8) ^ crctbl[indx]
+	mov edx,[esi]       ; edx = tbl[indx]
+	xor eax,edx         ; crc = (crc >> 8) ^ tbl[indx]
 	mov [crc],eax       ; save new crc
 	;-------------------------------------------------
 	; check end of buffer
@@ -169,7 +122,7 @@ shwtbl:
 	push ebx
 	push ecx
 	push edx
-	mov ebx,crctbl        ; point to crc table
+	mov ebx,tbl           ; point to crc table
 	mov ecx,256           ; loop counter = 256
 	xor edx,edx           ; initialize index to table = 0
 .lp:                          ; table loop x 256
@@ -397,6 +350,7 @@ putchar:
 	align 16
 ; binary to hex translate table
 hxtbl:  db '0123456789ABCDEF'
+	%include "crc32tbl.inc"
 	;---------------------------------
 	; reserved space for variable data
 	; read/write, not executable
@@ -413,7 +367,6 @@ rght    resd 1          ; right half of expression
 crc     resd 1          ; cyclical redundancy check crc
 bufsz   resd 1          ; size of input buffer
 indx    resd 1          ; index into crc table
-crctbl  resd 256        ; crc table
 buf     resb 65536      ; input buffer
 stack   resb 8192       ; recursive program stack
 stkend  resb 4          ; highest address of stack
