@@ -8,8 +8,6 @@ Make shell scripts executable.
 
 chmod 755 *.sh
 
-Run the shell script bldtbl.sh.
-
 Compile the programs.
 
 ./inst.sh
