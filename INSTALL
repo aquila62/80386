@@ -1,10 +1,16 @@
 Installing the 80386 repository:
 
+Install the package nasm.
+
+sudo apt-get install nasm
+
 Make shell scripts executable.
 
 chmod 755 *.sh
 
-Next compile the programs.
+Run the shell script bldtbl.sh.
+
+Compile the programs.
 
 ./inst.sh
 
