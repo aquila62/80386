@@ -7,3 +7,6 @@ make -f etausgen.mak
 make -f etausraw.mak
 make -f lmt.mak
 make -f getprm.mak
+make -f crctbl.mak
+make -f crc16.mak
+make -f putnine.mak

@@ -32,7 +32,7 @@ The program prints the state of the three towers after each move.
 
 ---------------------------------------------------------------
 
-Perform a cyclical reduncancy check by running crc.  This
+Perform a 32 bit cyclic reduncancy check by running crc.  This
 program produces a 32 bit hash of input data read from stdin.
 
 Usage:
@@ -41,6 +41,29 @@ cat myfile | crc
 echo "text" | crc
 
 The output is a 32 bit hexadecimal number.
+
+---------------------------------------------------------------
+
+Perform a 16 bit CCITT cyclic reduncancy check by running crc16.
+This program produces a 16 bit hash of input data read from stdin.
+
+Usage:
+
+cat myfile | crc16
+echo "text" | crc16
+putnine | crc16
+
+The output is a 16 bit hexadecimal number.
+
+putnine is a simple program that prints the string, "123456789",
+to stdout without an end of line character at the end.
+
+This string is used to verify that the right algorithm is being
+used.
+
+The program, crc16.asm, includes a CRC table, called crc16tbl.inc.
+The shell script to create this table is called bldtbl.sh.
+This shell script calls a program, called crctbl.
 
 ---------------------------------------------------------------
 
