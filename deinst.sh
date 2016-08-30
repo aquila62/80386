@@ -10,3 +10,4 @@ make -f getprm.mak clean
 make -f crctbl.mak clean
 make -f crc16.mak clean
 make -f putnine.mak clean
+rm -f crc16tbl.inc
