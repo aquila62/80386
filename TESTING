@@ -9,8 +9,12 @@ lfsr15
 ---------------------------------------------------------------
 
 Test the Sieve of Eratosthenes by running sv.  Prime numbers
-are generated up to 268435399.  Only primes from 268427279
-to 268435399 are printed, to save space.
+are generated up to 33554393.  Only primes from 33546251
+to 33554393 are printed, to save space.  The tally is
+printed to stderr.
+
+Total primes computed in this program up to 33554393
+is 2063689.  Roughly every 16th number is prime.
 
 Usage:
 
@@ -33,14 +37,34 @@ The program prints the state of the three towers after each move.
 ---------------------------------------------------------------
 
 Perform a 32 bit cyclic reduncancy check by running crc.  This
-program produces a 32 bit hash of input data read from stdin.
+program produces a 32 bit hash based on input data read from stdin.
 
 Usage:
 
 cat myfile | crc
 echo "text" | crc
+putnine | crc
 
 The output is a 32 bit hexadecimal number.
+
+putnine is a simple program that prints the string, "123456789",
+to stdout without an end of line character at the end.
+
+This string is used to verify that the right algorithm is being
+used.
+
+The combination of putnine and the 32 bit crc program matches
+the results in Lammert Bies's online CRC calculator.
+
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+
+putnine | crc   gives CBF43926 
+
+The program, crc.asm, includes a CRC table file, called
+crc32tbl.inc.
+The shell script to create this table file is called
+bldtbl32.sh.
+This shell script runs a program, called crctbl32.
 
 ---------------------------------------------------------------
 
@@ -61,9 +85,18 @@ to stdout without an end of line character at the end.
 This string is used to verify that the right algorithm is being
 used.
 
-The program, crc16.asm, includes a CRC table, called crc16tbl.inc.
-The shell script to create this table is called bldtbl.sh.
-This shell script calls a program, called crctbl.
+The combination of putnine and the crc16 program matches the
+results in Lammert Bies's online CRC calculator.
+
+https://www.lammertbies.nl/comm/info/crc-calculation.html
+
+putnine | crc16 gives 29B1
+
+The program, crc16.asm, includes a CRC table file, called
+crc16tbl.inc.
+The shell script to create this table file is called
+bldtbl16.sh.
+This shell script runs a program, called crctbl16.
 
 ---------------------------------------------------------------
 
