@@ -18,6 +18,11 @@
    ; 59 Temple Place - Suite 330
    ; Boston, MA 02111-1307, USA.
 
+;--------------------------------------------------------------------
+; This program calculates a 32-bit cyclic redundancy check
+; for standard input data.
+;--------------------------------------------------------------------
+
 	bits 32               ; 32-bit assembler
 	global _start         ; tell Linux what the entry point is
 	section .text         ; read only, executable section
