@@ -36,6 +36,18 @@ The program prints the state of the three towers after each move.
 
 ---------------------------------------------------------------
 
+Solve the unbounded knapsack puzzle by running knap.
+
+Usage:
+
+knap
+
+The program prints the state of each maximum reached.
+There are four maximum solutions to this puzzle.
+All four solutions are correct.
+
+---------------------------------------------------------------
+
 Perform a 32 bit cyclic reduncancy check by running crc.  This
 program produces a 32 bit hash based on input data read from stdin.
 
