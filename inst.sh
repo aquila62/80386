@@ -3,6 +3,7 @@ make -f lfsr15.mak
 make -f sv.mak
 make -f twr.mak
 make -f knap.mak
+make -f knap01.mak
 make -f etausgen.mak
 make -f etausraw.mak
 make -f lmt.mak

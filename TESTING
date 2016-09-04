@@ -46,6 +46,44 @@ The program prints the state of each maximum reached.
 There are four maximum solutions to this puzzle.
 All four solutions are correct.
 
+The example for this program was taken from Rosetta Code at
+
+http://www.rosettacode.org.
+
+---------------------------------------------------------------
+
+Solve the knapsack 0/1 puzzle by running knap01.
+
+Usage:
+
+knap01
+
+The solution for this puzzle uses a recursive routine
+to maximize the value.
+
+This program reads an input file, called knap01.rc.
+
+Each line in knap01.rc contains three tokens:
+
+header, weight, value
+
+In this puzzle, the header identifies the name of an
+ingredient in the knapsack.
+Weight is the weight of the ingredient in decagrams (dag).
+Value is the value assigned to including the ingredient
+in the knapsack.
+In this puzzle, the maximum weight of all ingredients
+is 400 decagrams.
+
+This program produces 2779 lines of output
+containing 202 increasing maximum values,
+and computes 4194304 different combinations to arrive
+at the maximum value of 1030 for 12 ingredients.
+
+The example for this program was taken from Rosetta Code at
+
+http://www.rosettacode.org.
+
 ---------------------------------------------------------------
 
 Perform a 32 bit cyclic reduncancy check by running crc.  This
