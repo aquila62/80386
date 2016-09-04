@@ -253,6 +253,7 @@ eval:
 	add eax,ebx
 	mov [totval],eax
 	mov ebx,[maxval]
+	; call putmax    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	cmp eax,ebx
 	jb .done              ; no new maximum value
 	mov [maxval],eax      ; new maximum value
@@ -634,6 +635,17 @@ putspc:
 	pop eax
 	ret
 ;---------------------------------------------------
+; print X followed by space
+;---------------------------------------------------
+putx:
+	push eax
+	mov al,'X'
+	call putchar
+	mov al,0x20
+	call putchar
+	pop eax
+	ret
+;---------------------------------------------------
 ; print end of line
 ;---------------------------------------------------
 puteol:
@@ -653,7 +665,7 @@ putstr:
 	mov al,[esi]       ; current char in string
 	or al,al           ; end of string?
 	jz .done           ; yes, finish
-	call puterr        ; no, print char to stdout
+	call putchar       ; no, print char to stdout
 	inc esi            ; point to next char in string
 	jmp .lp            ; repeat string loop
 .done:
