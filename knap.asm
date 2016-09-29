@@ -44,6 +44,10 @@ eoj:                     ; terminate the program
 	mov eax,1        ; terminate the program
 	xor ebx,ebx      ; RC=0
 	int 0x80         ; syscall (operating system service)
+	nop
+	nop
+	nop
+	nop
 ;---------------------------------------------------
 ; Maximize the contents of the knapsack
 ;---------------------------------------------------
@@ -739,12 +743,14 @@ putchar:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,1       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx
@@ -765,12 +771,14 @@ puterr:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,2       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx

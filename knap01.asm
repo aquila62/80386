@@ -56,6 +56,10 @@ eoj:                       ; terminate the program
 	mov eax,1          ; terminate the program
 	xor ebx,ebx        ; RC=0
 	int 0x80           ; syscall (operating system service)
+	nop
+	nop
+	nop
+	nop
 ;---------------------------------------------------
 ; Recursive routine
 ; Maximize the contents of the knapsack
@@ -689,7 +693,9 @@ gethndl:
 	push ebx
 	push ecx
 	push edx
+	push esi
 	push edi
+	push ebp
 	mov eax,3          ; read
 	mov ebx,[hndl]     ; file handle
 	mov ecx,buf        ; buf
@@ -701,7 +707,9 @@ gethndl:
 	inc eax            ; yes, eofsw = true
 	mov [eofsw],eax
 .done:
+	pop ebp
 	pop edi
+	pop esi
 	pop edx
 	pop ecx
 	pop ebx
@@ -715,12 +723,18 @@ opn:
 	push ebx
 	push ecx
 	push edx
+	push esi
+	push edi
+	push ebp
 	mov eax,5          ; open
 	mov ebx,fname      ; file name address
 	mov ecx,0          ; read-only = 0
 	mov edx,0          ; access mode = NULL
 	int 0x80           ; syscall
 	mov [hndl],eax     ; save handle
+	pop ebp
+	pop edi
+	pop esi
 	pop edx
 	pop ecx
 	pop ebx
@@ -734,11 +748,17 @@ cls:
 	push ebx
 	push ecx
 	push edx
+	push esi
+	push edi
+	push ebp
 	mov eax,6          ; open
 	mov ebx,[hndl]     ; file handle
 	mov ecx,0          ; NULL
 	mov edx,0          ; NULL
 	int 0x80           ; syscall
+	pop ebp
+	pop edi
+	pop esi
 	pop edx
 	pop ecx
 	pop ebx
@@ -1259,12 +1279,14 @@ putchar:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,1       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx
@@ -1285,12 +1307,14 @@ puterr:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,2       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx

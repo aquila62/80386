@@ -77,16 +77,18 @@ _start:
 	mov eax,[totdsks]     ; parm 1
 	push eax
 	call movedsk          ; top level recursive call
-	pop eax               ; remove parm 1
-	pop eax               ; remove parm 2
-	pop eax               ; remove parm 3
-	pop eax               ; remove parm 4
+	add esp,16            ; restore the stack
+        ;------------------------------------------------------------
 	call shw              ; print final state
 	call puteol           ; print final end of line
 eoj:                     ; terminate the program
 	mov eax,1        ; terminate the program
 	xor ebx,ebx      ; RC=0
 	int 0x80         ; syscall (operating system service)
+	nop
+	nop
+	nop
+	nop
 ;---------------------------------------------------
 ; read total disks from stdin
 ; total disks is a single digit
@@ -229,10 +231,7 @@ movedsk:
 	mov eax,[parm1]
 	push eax             ; push parm 1
 	call movedsk         ; recursive call to movedsk
-	pop eax              ; pop parm 1
-	pop eax              ; pop parm 2
-	pop eax              ; pop parm 3
-	pop eax              ; pop parm 4
+	add esp,16           ; restore the stack
 	;---------------------------------------------------
 	; move disk n from source to target
 	; first pop stka
@@ -315,10 +314,8 @@ movedsk:
 	mov eax,[parm1]
 	push eax             ; push parm 1
 	call movedsk         ; recursive call to movedsk
-	pop eax              ; pop parm 1
-	pop eax              ; pop parm 2
-	pop eax              ; pop parm 3
-	pop eax              ; pop parm 4
+	add esp,16           ; restore the stack
+	;---------------------------------------------------
 .done:
 	pop ebx
 	pop eax
@@ -484,6 +481,9 @@ pause:
 	push ebx
 	push ecx
 	push edx
+	push esi
+	push edi
+	push ebp
 	mov eax,3        ; read input withn wait
 	mov ebx,0        ; stdin
 	mov ecx,kbbuf    ; buf
@@ -493,6 +493,9 @@ pause:
 	jz eoj           ; yes, quit
 	cmp al,0x1a      ; CTL-Z?
 	jz eoj           ; yes, quit
+	pop ebp
+	pop edi
+	pop esi
 	pop edx
 	pop ecx
 	pop ebx
@@ -644,12 +647,14 @@ putchar:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,1       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx
@@ -690,5 +695,5 @@ popdsk  resb 4          ; popped source disk
 stka    resb 16         ; stack A
 stkb    resb 16         ; stack B
 stkc    resb 16         ; stack C
-stack   resb 8192       ; recursive program stack
+stack   resb 16384      ; recursive program stack
 stkend  resb 4          ; highest address of stack

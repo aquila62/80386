@@ -44,8 +44,12 @@ eoj:
 ;---------------------------------------------------
 gen:
 	push eax
+	push ebx
 	push ecx
+	push edx
+	push esi
 	push edi
+	push ebp
 	mov eax,1           ; buffer size = 2^20
 	shl eax,20
 	mov [bufsz],eax
@@ -64,8 +68,12 @@ gen:
 	mov edx,[bufsz]     ; buffer length
 	int 0x80            ; syscall
 	jmp .lp             ; repeat buffer loop
+	pop ebp
 	pop edi
+	pop esi
+	pop edx
 	pop ecx
+	pop ebx
 	pop eax
 	ret
 ;---------------------------------------------------
@@ -76,6 +84,9 @@ init:
 	push ebx
 	push ecx
 	push edx
+	push esi
+	push edi
+	push ebp
 	mov eax,13         ; get seconds since epoch
 	xor ebx,ebx        ; NULL parameter
 	int 0x80           ; syscall
@@ -98,6 +109,9 @@ init:
 	mov eax,[outpt]
 	mov [pprev],eax    ; save random number in pprev
 	call bldtbl        ; build state table with random data
+	pop ebp
+	pop edi
+	pop esi
 	pop edx
 	pop ecx
 	pop ebx
@@ -292,6 +306,9 @@ pause:
 	push ebx
 	push ecx
 	push edx
+	push esi
+	push edi
+	push ebp
 	mov eax,3        ; read input withn wait
 	mov ebx,0        ; stdin
 	mov ecx,kbbuf    ; buf
@@ -301,6 +318,9 @@ pause:
 	jz eoj           ; yes, quit
 	cmp al,0x1a      ; CTL-Z?
 	jz eoj           ; yes, quit
+	pop ebp
+	pop edi
+	pop esi
 	pop edx
 	pop ecx
 	pop ebx
@@ -472,12 +492,14 @@ putchar:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,1       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx

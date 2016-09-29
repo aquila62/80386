@@ -53,6 +53,9 @@ pause:
 	push ebx
 	push ecx
 	push edx
+	push esi
+	push edi
+	push ebp
 	mov eax,3        ; read input withn wait
 	mov ebx,0        ; stdin
 	mov ecx,kbbuf    ; buf
@@ -62,6 +65,9 @@ pause:
 	jz eoj           ; yes, quit
 	cmp al,0x1a      ; CTL-Z?
 	jz eoj           ; yes, quit
+	pop ebp
+	pop edi
+	pop esi
 	pop edx
 	pop ecx
 	pop ebx
@@ -233,12 +239,14 @@ putchar:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,1       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx

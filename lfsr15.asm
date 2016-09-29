@@ -96,6 +96,10 @@ eoj:
 	mov eax,1                ; exit
 	xor ebx,ebx              ; rc = 0
 	int 0x80                 ; syscall
+	nop
+	nop
+	nop
+	nop
 gen:
 	push eax
 	push ebx
@@ -247,12 +251,14 @@ putchar:
 	push edx
 	push esi
 	push edi
+	push ebp
 	mov [chbuf],al  ; place character in its own buffer
 	mov eax,4       ; write
 	mov ebx,1       ; handle (stdout)
 	mov ecx,chbuf   ; addr of buf to write
 	mov edx,1       ; #chars to write
 	int 0x80        ; syscall
+	pop ebp
 	pop edi
 	pop esi
 	pop edx
