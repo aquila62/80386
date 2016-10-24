@@ -181,6 +181,27 @@ etausraw | dieharder -a -g 200
 
 ---------------------------------------------------------------
 
+Generate a random data stream by running eeglraw.  This program 
+creates an endless stream of binary data.  Press CTL-Z to stop
+the program.  The randomizing algorithm used is called eegl,
+based on a 32-bit linear feedback shift register.  See the eegl
+repository for more information on this algorithm.  The initial
+state for this program is based on the UNIX date and time in seconds
+since the epoch.
+
+This program has been tested successfully with the dieharder
+suite of randomness tests.
+
+Usage:
+
+./etausraw | hexdump -C | less
+
+./etausraw | dieharder -a -g 200
+
+./tstdie.sh
+
+---------------------------------------------------------------
+
 Run lmt to limit a data stream or bit stream to 16 megabytes
 of data.  It reads 16 megabytes from stdin and writes them
 to stdout.
@@ -190,6 +211,8 @@ Usage:
 lmt
 
 etausraw | lmt | crc
+
+eeglraw  | lmt | crc
 
 ---------------------------------------------------------------
 
