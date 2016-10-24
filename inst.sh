@@ -6,6 +6,8 @@ make -f knap.mak
 make -f knap01.mak
 make -f etausgen.mak
 make -f etausraw.mak
+make -f eeglgen.mak
+make -f eeglraw.mak
 make -f lmt.mak
 make -f getprm.mak
 make -f putnine.mak
