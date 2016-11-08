@@ -150,6 +150,37 @@ This shell script runs a program, called crctbl16.
 
 ---------------------------------------------------------------
 
+Demonstrate the Ethiopian multiply algorithm by running emul.
+
+Usage:
+
+emul
+
+The output from emul is a series of 10 examples of the Ethiopian
+multiply algorithm.  The numbers to multiply are chosen at random
+by the program.  The program shows step by step how the algorithm
+works.  The last four lines of output summarize the multiplication.
+The "sum" line is the result of the Ethiopian algorithm.  The
+"a*b" line is the product of multiplication using the "mul"
+instruction in assembler.  The two last lines should match.
+All numbers shown are in hexadecimal.  Each example is separated
+by a line of dashes.  The random number generator in this
+program is the eegl algorithm, which is an extended linear
+feedback shift register (LFSR) algorithm with the Bays-Durham
+shuffle of 1024 states.
+
+For more information on the eegl algorithm, see the eegl
+repository at:
+
+http://www.github.com/aquila62/eegl
+
+For more information about the Ethiopian multiply algorithm,
+see the description at rosettacode.org:
+
+http://www.rosettacode.org/wiki/Ethiopian_multiplication
+
+---------------------------------------------------------------
+
 Generate a random bit stream by running etausgen.  This program 
 creates an endless stream of ASCII zeros and ones.  Press CTL-Z
 to stop the program.  The randomizing algorithm used is called
@@ -160,6 +191,11 @@ is based on the UNIX date and time in seconds since the epoch.
 Usage:
 
 etausgen
+
+For more information on the etaus algorithm, see the etaus
+repository at:
+
+http://www.github.com/aquila62/etaus
 
 ---------------------------------------------------------------
 

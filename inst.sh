@@ -8,6 +8,7 @@ make -f etausgen.mak
 make -f etausraw.mak
 make -f eeglgen.mak
 make -f eeglraw.mak
+make -f emul.mak
 make -f lmt.mak
 make -f getprm.mak
 make -f putnine.mak
