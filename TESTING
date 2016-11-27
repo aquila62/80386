@@ -86,6 +86,27 @@ http://www.rosettacode.org.
 
 ---------------------------------------------------------------
 
+Test Euler's sum of powers conjecture
+
+Usage:
+
+./euler
+
+The equality being tested is:
+
+(X0)^5 + (X1)^5 + (X2)^5 + (X3)^5 = Y^5
+
+Where (Xi) and Y are 0 to 250 inclusive
+and (Xi) and Y are unique integers.
+
+The correct answer is:
+
+27^5 + 84^5 + 110^5 + 133^5 = 144^5
+
+See rosettacode.org for a description of this problem.
+
+---------------------------------------------------------------
+
 Perform a 32 bit cyclic reduncancy check by running crc.  This
 program produces a 32 bit hash based on input data read from stdin.
 
